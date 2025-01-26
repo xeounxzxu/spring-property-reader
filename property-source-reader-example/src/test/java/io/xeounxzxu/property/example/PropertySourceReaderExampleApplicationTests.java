@@ -1,10 +1,10 @@
-package com.example.propertyreader;
+package io.xeounxzxu.property.example;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringPropertyReaderApplicationTests {
+class PropertySourceReaderExampleApplicationTests {
 
 	@Test
 	void contextLoads() {

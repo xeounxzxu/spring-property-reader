@@ -1,1 +1,14 @@
+pluginManagement {
+    plugins {
+        id 'org.springframework.boot' version "${springBootVersion}"
+        id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+        id 'io.spring.javaformat' version "${springJavaFormatVersion}"
+    }
+}
+
 rootProject.name = 'spring-property-reader'
+
+include(
+        'property-source-reader',
+        'property-source-reader-example'
+)

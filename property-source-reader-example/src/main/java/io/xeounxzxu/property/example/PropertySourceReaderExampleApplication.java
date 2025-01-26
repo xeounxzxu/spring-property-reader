@@ -1,13 +1,13 @@
-package com.example.propertyreader;
+package io.xeounxzxu.property.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringPropertyReaderApplication {
+public class PropertySourceReaderExampleApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringPropertyReaderApplication.class, args);
+		SpringApplication.run(PropertySourceReaderExampleApplication.class, args);
 	}
 
 }
