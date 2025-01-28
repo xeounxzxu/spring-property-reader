@@ -3,7 +3,6 @@ plugins {
     id 'io.spring.javaformat' apply(false)
     id 'org.springframework.boot' apply(false)
     id 'io.spring.dependency-management'
-    id 'maven-publish'
 }
 
 apply from: 'lint.gradle'
@@ -15,6 +14,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
 
@@ -30,42 +30,4 @@ subprojects {
 
     bootJar.enabled = false
     jar.enabled = true
-
-    test {
-        useJUnitPlatform {
-            excludeTags('develop', 'restdocs')
-        }
-    }
-
-    tasks.register('unitTest', Test) {
-        group = 'verification'
-        useJUnitPlatform {
-            excludeTags('develop', 'context', 'restdocs')
-        }
-    }
-
-    tasks.register('contextTest', Test) {
-        group = 'verification'
-        useJUnitPlatform {
-            includeTags('context')
-        }
-    }
-
-    tasks.register('restDocsTest', Test) {
-        group = 'verification'
-        useJUnitPlatform {
-            includeTags('restdocs')
-        }
-    }
-
-    tasks.register('developTest', Test) {
-        group = 'verification'
-        useJUnitPlatform {
-            includeTags('develop')
-        }
-    }
-
-//    tasks.named('asciidoctor') {
-//        dependsOn restDocsTest
-//    }
 }

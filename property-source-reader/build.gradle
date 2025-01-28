@@ -1,15 +1,39 @@
+plugins {
+    id 'maven-publish'
+}
+
+
 bootJar.enabled = false
 jar.enabled = true
 
-apply plugin: 'maven-publish'
+//apply plugin: 'maven-publish'
+
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            groupId
+//            artifactId 'io.xeounxzxu'
+//            version '0.0.1-SNAPSHOT'
+//            from components.java
+//        }
+//    }
+//}
 
 publishing {
     publications {
-        maven(MavenPublication) {
-            groupId
-            artifactId 'io.xeounxzxu'
-            version '0.0.1-SNAPSHOT'
+        mavenJava(MavenPublication) {
+            groupId 'io.xeounxzxu'
+            artifactId 'property-source-reader'
+            version '0.0.2-SNAPSHOT'
             from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
         }
     }
 }
