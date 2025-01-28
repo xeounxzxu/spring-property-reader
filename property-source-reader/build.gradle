@@ -1,3 +1,19 @@
+bootJar.enabled = false
+jar.enabled = true
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId
+            artifactId 'io.xeounxzxu'
+            version '0.0.1-SNAPSHOT'
+            from components.java
+        }
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
 }

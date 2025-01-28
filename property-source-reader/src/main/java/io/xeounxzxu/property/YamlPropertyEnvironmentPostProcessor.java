@@ -18,53 +18,61 @@ import java.util.stream.Stream;
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class YamlPropertyEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
-	private static final String SPRING_PROFILES = "spring.profiles";
-	private static final String SPRING_PROFILES_ACTIVE_ON_PROFILE = "spring.config.activate.on-profile";
-	private static final String FILE_LOCATION_PATTERN = "classpath:*.yml";
+    private static final String SPRING_PROFILES = "spring.profiles";
 
-	private final YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
+    private static final String SPRING_PROFILES_ACTIVE_ON_PROFILE = "spring.config.activate.on-profile";
 
-	@Override
-	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-		String[] activeProfiles = environment.getActiveProfiles();
-		var resourceLoader = new DefaultResourceLoader();
-		var resourcePatternResolver = new PathMatchingResourcePatternResolver(resourceLoader);
+    private static final String FILE_LOCATION_PATTERN = "classpath:*.yml";
 
-		try {
-			Resource[] resources = resourcePatternResolver.getResources(FILE_LOCATION_PATTERN);
+    private final YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
 
-			for (Resource resource : resources) {
-				if (!resource.exists()) {
-					throw new IllegalArgumentException("Resource " + resource + " does not exist");
-				}
+    @Override
+    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        String[] activeProfiles = environment.getActiveProfiles();
+        var resourceLoader = new DefaultResourceLoader();
+        var resourcePatternResolver = new PathMatchingResourcePatternResolver(resourceLoader);
 
-				List<PropertySource<?>> propertySources = yamlPropertySourceLoader.load(resource.getFilename(), resource);
+        try {
+            Resource[] resources = resourcePatternResolver.getResources(FILE_LOCATION_PATTERN);
 
-				propertySources.stream().filter(propertySource -> propertySource.getSource() instanceof Map)
-						.forEach(propertySource -> {
-							Map<String, Object> sourceMap = (Map<String, Object>) propertySource.getSource();
+            for (Resource resource : resources) {
+                if (!resource.exists()) {
+                    throw new IllegalArgumentException("Resource " + resource + " does not exist");
+                }
 
-							Object profiles = sourceMap.getOrDefault(SPRING_PROFILES,
-									sourceMap.get(SPRING_PROFILES_ACTIVE_ON_PROFILE));
+                List<PropertySource<?>> propertySources = yamlPropertySourceLoader.load(resource.getFilename(),
+                        resource);
 
-							if (profiles == null) {
-								addPropertySource(environment, propertySource);
-							} else {
-								String[] profileArray = profiles.toString().split(",");
-								for (String profile : profileArray) {
-									if (Stream.of(activeProfiles).anyMatch(activeProfile -> activeProfile.equals(profile.trim()))) {
-										addPropertySource(environment, propertySource);
-									}
-								}
-							}
-						});
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to process YAML properties", e);
-		}
-	}
+                propertySources.stream()
+                    .filter(propertySource -> propertySource.getSource() instanceof Map)
+                    .forEach(propertySource -> {
+                        Map<String, Object> sourceMap = (Map<String, Object>) propertySource.getSource();
 
-	private void addPropertySource(ConfigurableEnvironment environment, PropertySource<?> propertySource) {
-		environment.getPropertySources().addFirst(propertySource);
-	}
+                        Object profiles = sourceMap.getOrDefault(SPRING_PROFILES,
+                                sourceMap.get(SPRING_PROFILES_ACTIVE_ON_PROFILE));
+
+                        if (profiles == null) {
+                            addPropertySource(environment, propertySource);
+                        }
+                        else {
+                            String[] profileArray = profiles.toString().split(",");
+                            for (String profile : profileArray) {
+                                if (Stream.of(activeProfiles)
+                                    .anyMatch(activeProfile -> activeProfile.equals(profile.trim()))) {
+                                    addPropertySource(environment, propertySource);
+                                }
+                            }
+                        }
+                    });
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Failed to process YAML properties", e);
+        }
+    }
+
+    private void addPropertySource(ConfigurableEnvironment environment, PropertySource<?> propertySource) {
+        environment.getPropertySources().addFirst(propertySource);
+    }
+
 }
